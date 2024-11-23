@@ -19,6 +19,7 @@ interface RecommendationCardProps {
 	whyMeetReasons: string[];
 	conversationStarters: string[];
 	interests?: string[];
+	matchId: number;
 }
 
 const RecommendationCard = ({
@@ -29,12 +30,14 @@ const RecommendationCard = ({
 	whyMeetReasons,
 	conversationStarters,
 	interests = [],
+	matchId
 }: RecommendationCardProps) => {
 	const [expanded, setExpanded] = useState(false);
 	const [meetingStatus, setMeetingStatus] = useState<"met" | "not-met" | null>(
 		null
 	);
 	const [showFeedback, setShowFeedback] = useState(false);
+
 
 	return (
 		<Card className="w-full max-w-md mx-auto shadow-lg">
@@ -55,7 +58,7 @@ const RecommendationCard = ({
 						</div>
 						<div className="flex items-center text-sm text-gray-600">
 							<Star className="w-4 h-4 mr-1 text-yellow-500" />
-							<span>{`${matchPercentage}% Match`}</span>
+							<span>{`${Math.round(matchPercentage)}% Match`}</span>
 						</div>
 					</div>
 				</div>
@@ -66,7 +69,7 @@ const RecommendationCard = ({
 						<h4 className="font-medium">Why You Should Meet:</h4>
 						<ul className="space-y-1 text-sm">
 							{whyMeetReasons.map((reason, index) => (
-								<li key={index} className="flex items-start items-center">
+								<li key={index} className="flex items-center">
 									<ThumbsUp className="w-4 h-4 mr-2 text-green-500 flex" />
 									{reason}
 								</li>
@@ -126,7 +129,7 @@ const RecommendationCard = ({
 										<button
 											key={rating}
 											className="text-yellow-400 hover:text-yellow-500"
-											onClick={() => setShowFeedback(true)}
+											onClick={() => { setShowFeedback(true); }}
 										>
 											<Star className="w-6 h-6" />
 										</button>

@@ -11,6 +11,7 @@ type Match = {
 	whyMeetReasons: string[];
 	conversationStarters: string[];
 	profileImage?: string; // Optional profile image URL
+	matchId: number
 };
 
 // Transform LinkedIn data into a Match
@@ -29,6 +30,7 @@ const MatchedParser = (match: any): Match => {
 		name: `${person.firstName} ${person.lastName}`,
 		occupation: `${person.positions.positionHistory[0].title} at ${company.name}`,
 		matchPercentage,
+		matchId: match.id,
 		profileImage: person.photoUrl,
 		whyMeetReasons: match.match_reasons || [],
 		conversationStarters: [
@@ -93,6 +95,7 @@ const RecommendationScreen = async () => {
 				<RecommendationCard
 					key={index}
 					name={match.name}
+					matchId={match.matchId || 45}
 
 					occupation={match.occupation}
 					matchPercentage={match.matchPercentage}
