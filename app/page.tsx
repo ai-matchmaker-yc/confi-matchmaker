@@ -117,12 +117,12 @@ export default async function Index({ searchParams }: {
                   fill="#343E4E"
                 />
                 <foreignObject
-                  width={400}
+                  width={318}
                   height={684}
                   clipPath="url(#2ade4387-9c63-4fc4-b754-10e687a0d332)"
                   transform="translate(24 24)"
                 >
-                  <img alt="" src="demo.png" />
+                  <img alt="" src="demo2.png" />
                 </foreignObject>
               </svg>
             </div>
