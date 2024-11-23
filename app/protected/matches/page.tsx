@@ -86,6 +86,9 @@ const RecommendationScreen = async () => {
 	const match = rawMatches ? MatchedParser(rawMatches[0]) : null;
 	// const matches = match ? [match, ...defaultMatches] : defaultMatches;
 	const matches = rawMatches?.map((m) => MatchedParser(m))
+
+	const sortedMatches = matches?.sort((a, b) => b.matchPercentage - a.matchPercentage);
+
 	return (
 		<div className="flex gap-4 flex-col w-full p-4">
 			{matches.map((match, index) => (
