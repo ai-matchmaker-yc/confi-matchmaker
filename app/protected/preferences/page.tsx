@@ -63,7 +63,7 @@ const ConferencePreferences = () => {
     if (value.trim()) {
       setFormData(prev => ({
         ...prev,
-        [key]: [...(prev[key] as string[]), value]
+        [key]: [...prev[key], value.trim()]
       }));
       if (key === 'goals') setNewGoal('');
       if (key === 'interests') setNewInterest('');
@@ -71,27 +71,30 @@ const ConferencePreferences = () => {
     }
   };
 
+  const handleKeyDown = (
+    e: React.KeyboardEvent<HTMLInputElement>,
+    key: 'goals' | 'interests' | 'rolesInterested',
+    value: string
+  ) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      addItem(key, value);
+    }
+  };
+
   const removeItem = (key: 'goals' | 'interests' | 'rolesInterested', index: number) => {
     setFormData(prev => ({
       ...prev,
-      [key]: [...prev[key] as string[]].filter((_, i) => i !== index)
+      [key]: prev[key].filter((_, i) => i !== index)
     }));
   };
 
   const handleSubmit = async () => {
-    // Save to Supabase
-    // const { data, error } = await supabase
-    //   .from('user_preferences')
-    //   .upsert({
-    //     user_id: currentUserId,
-    //     ...formData
-    //   });
-
     router.push('/recommendations');
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-white py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-3xl mx-auto space-y-6">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900">
@@ -104,7 +107,7 @@ const ConferencePreferences = () => {
 
         <div className="grid gap-6 md:grid-cols-2">
           {/* Goals Section */}
-          <Card className="md:col-span-1">
+          <Card className="md:col-span-1 shadow-sm">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Target className="w-5 h-5 text-blue-600" />
@@ -120,11 +123,12 @@ const ConferencePreferences = () => {
                   placeholder="Add a goal..."
                   value={newGoal}
                   onChange={(e) => setNewGoal(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && addItem('goals', newGoal)}
+                  onKeyDown={(e) => handleKeyDown(e, 'goals', newGoal)}
                 />
                 <Button 
                   onClick={() => addItem('goals', newGoal)}
                   size="icon"
+                  type="button"
                 >
                   <Plus className="w-4 h-4" />
                 </Button>
@@ -148,7 +152,7 @@ const ConferencePreferences = () => {
           </Card>
 
           {/* Interests Section */}
-          <Card className="md:col-span-1">
+          <Card className="md:col-span-1 shadow-sm">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Tags className="w-5 h-5 text-blue-600" />
@@ -164,7 +168,7 @@ const ConferencePreferences = () => {
                   <Badge
                     key={interest}
                     variant="outline"
-                    className="cursor-pointer hover:bg-blue-50"
+                    className="cursor-pointer hover:bg-blue-50 transition-colors"
                     onClick={() => {
                       if (!formData.interests.includes(interest)) {
                         addItem('interests', interest);
@@ -180,11 +184,12 @@ const ConferencePreferences = () => {
                   placeholder="Add custom interest..."
                   value={newInterest}
                   onChange={(e) => setNewInterest(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && addItem('interests', newInterest)}
+                  onKeyDown={(e) => handleKeyDown(e, 'interests', newInterest)}
                 />
                 <Button 
                   onClick={() => addItem('interests', newInterest)}
                   size="icon"
+                  type="button"
                 >
                   <Plus className="w-4 h-4" />
                 </Button>
@@ -207,7 +212,7 @@ const ConferencePreferences = () => {
           </Card>
 
           {/* Looking to Meet Section */}
-          <Card className="md:col-span-2">
+          <Card className="md:col-span-2 shadow-sm">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Users className="w-5 h-5 text-blue-600" />
@@ -223,7 +228,7 @@ const ConferencePreferences = () => {
                   <Badge
                     key={role}
                     variant="outline"
-                    className="cursor-pointer hover:bg-blue-50"
+                    className="cursor-pointer hover:bg-blue-50 transition-colors"
                     onClick={() => {
                       if (!formData.rolesInterested.includes(role)) {
                         addItem('rolesInterested', role);
@@ -239,11 +244,12 @@ const ConferencePreferences = () => {
                   placeholder="Add custom role..."
                   value={newRole}
                   onChange={(e) => setNewRole(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && addItem('rolesInterested', newRole)}
+                  onKeyDown={(e) => handleKeyDown(e, 'rolesInterested', newRole)}
                 />
                 <Button 
                   onClick={() => addItem('rolesInterested', newRole)}
                   size="icon"
+                  type="button"
                 >
                   <Plus className="w-4 h-4" />
                 </Button>
