@@ -1,3 +1,5 @@
+
+
 import RecommendationCard from "@/components/matches/recommendation-card";
 import { createClient } from "@/utils/supabase/client";
 
@@ -75,11 +77,10 @@ const RecommendationScreen = async () => {
 	let { data: profiles, error } = await supabase
 		.from('profiles')
 		.select("*")
-		.eq('id', '');
-
-	// Transform the LinkedIn data into a Match
-	const Match = linkedInToMatch(profiles[0].linkedin_data);
-	const matches = [adamMatch, ...defaultMatches];
+		.eq('id', '0ae03ae7-c84e-4f62-a724-b9001258d77c');
+	// Transform the LinkedIn data into a Match if profiles exist
+	const match = profiles ? linkedInToMatch(profiles[0].linkedin_data) : null;
+	const matches = match ? [match, ...defaultMatches] : defaultMatches;
 
 	return (
 		<div className="flex gap-4 flex-col w-full p-4">
