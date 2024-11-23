@@ -8,13 +8,15 @@ import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { useRouter } from 'next/navigation';
-
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import ConferencePreferences from "../preferences/page"
 const WaitingPage = () => {
   const router = useRouter();
   const [dots, setDots] = useState('');
   const [userCount, setUserCount] = useState(0);
   const [tip, setTip] = useState(0);
   const [currentlyMatching, setCurrentlyMatching] = useState(false)
+  const [showPreferences, setShowPreferences] = useState(false)
 
   const minUsers = 60
 
@@ -100,12 +102,21 @@ const WaitingPage = () => {
         <div className='flex flex-col gap-2'>
           {/* Action Button */}
           <Button 
-          variant="outline" 
-          className="w-full"
-          onClick={() => router.push('/protected/preferences')}
-        >
-            Add preferences to who you want to meat
-          </Button>
+      variant="outline" 
+      className="w-full"
+      onClick={() => setShowPreferences(true)}
+    >
+      Add preferences to who you want to meet
+    </Button>
+
+    <Dialog open={showPreferences} onOpenChange={setShowPreferences}>
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle>Preferences</DialogTitle>
+        </DialogHeader>
+        <ConferencePreferences />
+      </DialogContent>
+    </Dialog>
           <Button 
             variant="outline" 
             className="w-full"

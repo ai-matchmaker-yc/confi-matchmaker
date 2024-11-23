@@ -18,6 +18,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { DialogClose } from "@/components/ui/dialog";
 
 const ConferencePreferences = () => {
   const router = useRouter();
@@ -90,21 +91,13 @@ const ConferencePreferences = () => {
   };
 
   const handleSubmit = async () => {
-    router.push('/recommendations');
+    // Add any submission logic here if needed
+    // router.push('/recommendations');
   };
 
   return (
-    <div className="min-h-screen bg-white py-8 px-4 sm:px-6 lg:px-8">
+    <div className="bg-white py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-3xl mx-auto space-y-6">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">
-            Personalize Your Conference Experience
-          </h1>
-          <p className="mt-2 text-gray-600">
-            Help us find the right people for you to meet (all fields are optional)
-          </p>
-        </div>
-
         <div className="grid gap-6 md:grid-cols-2">
           {/* Goals Section */}
           <Card className="md:col-span-1 shadow-sm">
@@ -273,13 +266,15 @@ const ConferencePreferences = () => {
         </div>
 
         <div className="flex justify-end mt-8">
-          <Button 
-            size="lg"
-            onClick={handleSubmit}
-            className="w-full md:w-auto"
-          >
-            Find My Matches
-          </Button>
+          <DialogClose asChild>
+            <Button 
+              size="lg"
+              onClick={handleSubmit}
+              className="w-full md:w-auto"
+            >
+              Confirm preferences
+            </Button>
+          </DialogClose>
         </div>
       </div>
     </div>
