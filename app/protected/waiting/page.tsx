@@ -7,8 +7,10 @@ import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
+import { useRouter } from 'next/navigation';
 
 const WaitingPage = () => {
+  const router = useRouter();
   const [dots, setDots] = useState('');
   const [userCount, setUserCount] = useState(0);
   const [tip, setTip] = useState(0);
@@ -97,7 +99,11 @@ const WaitingPage = () => {
 
         <div className='flex flex-col gap-2'>
           {/* Action Button */}
-          <Button variant="outline" className="w-full">
+          <Button 
+          variant="outline" 
+          className="w-full"
+          onClick={() => router.push('/protected/preferences')}
+        >
             Add preferences to who you want to meat
           </Button>
           <Button variant="outline" className="w-full">
