@@ -101,19 +101,6 @@ const RecommendationCard = ({
 								))}
 							</ul>
 						</div>
-						<div>
-							<h4 className="font-medium">Common Interests:</h4>
-							<div className="flex flex-wrap gap-2 mt-2">
-								{interests.map((interest, index) => (
-									<span
-										key={index}
-										className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-sm"
-									>
-										{interest}
-									</span>
-								))}
-							</div>
-						</div>
 						{!meetingStatus ? (
 							<div className="flex gap-2">
 								<Button
