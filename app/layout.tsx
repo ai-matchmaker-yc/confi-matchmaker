@@ -9,8 +9,8 @@ const defaultUrl = process.env.VERCEL_URL
 
 export const metadata = {
   metadataBase: new URL(defaultUrl),
-  title: "Ai matchmaker",
-  description: "The fastest way to build apps with Next.js and Supabase",
+  title: "AI Matchmaker",
+  description: "Connect smarter with our_product_name",
 };
 
 export default function RootLayout({
@@ -28,7 +28,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <main className="min-h-screen flex flex-col items-center">
-            <div className="flex-1 w-full flex flex-col items-center max-w-2xl" >
+            <div className="w-full">
               {children}
             </div>
           </main>

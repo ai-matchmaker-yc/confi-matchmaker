@@ -38,36 +38,7 @@ const MatchedParser = (match: any): Match => {
 };
 
 // Sample matches data
-const defaultMatches: Match[] = [
-	{
-		name: "Sarah Chen",
-		occupation: "Software Engineer at Google",
-		matchPercentage: 95,
-		whyMeetReasons: [
-			"You both work in IT",
-			"Similar interest in AI/ML",
-			"Both attended Stanford"
-		],
-		conversationStarters: [
-			"What have you recently worked on?",
-			"What's your take on the latest LLM developments?"
-		]
-	},
-	{
-		name: "Michael Rodriguez",
-		occupation: "Product Manager at Microsoft",
-		matchPercentage: 88,
-		whyMeetReasons: [
-			"Both interested in product development",
-			"Similar conference goals"
-		],
-		conversationStarters: [
-			"What brought you to this conference?",
-			"How do you approach product strategy?"
-		]
-	},
-	// Add more matches as needed
-];
+const defaultMatches: Match[] = [];
 
 const RecommendationScreen = async () => {
 	const supabase = await createClient();
@@ -95,7 +66,7 @@ const RecommendationScreen = async () => {
 
 	return (
 		<div className="flex gap-4 flex-col w-full p-4">
-			{matches.map((match, index) => (
+			{matches!.map((match, index) => (
 				<RecommendationCard
 					key={index}
 					name={match.name}
