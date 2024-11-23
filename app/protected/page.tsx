@@ -12,6 +12,14 @@ export default async function ProtectedPage() {
   if (!user) {
     return redirect("/sign-in");
   } else {
-    return redirect("/protected/onboarding")
+    const response = await supabase.from("profiles").select("*").eq("id", user.id).single()
+    if (
+      response.data?.linkedin_embedding !== "" ||
+      response.data?.linkedin_embedding !== null
+    ) {
+      return redirect("/protected/waiting");
+    } else {
+      return redirect("/protected/onboarding");
+    }
   }
 }
