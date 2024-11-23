@@ -148,7 +148,7 @@ export default function Onboarding() {
     const finalData = {
       ...form.getValues(),
       ...userData,
-      ...data
+      ...data,
     };
 
     const user = await supabase.auth.getUser();
@@ -270,7 +270,11 @@ export default function Onboarding() {
                         </FormItem>
                       )}
                     />
-                    <Button type="submit" className="w-full" disabled={disabled}>
+                    <Button
+                      type="submit"
+                      className="w-full"
+                      disabled={disabled}
+                    >
                       Next
                     </Button>
                   </form>
@@ -281,10 +285,7 @@ export default function Onboarding() {
                     onSubmit={step2Form.handleSubmit(onStep2Submit)}
                     className="space-y-4"
                   >
-                      <div className="text-center">
-                        <h1>
-                          {JSON.stringify(step2Form.formState.errors)}
-                        </h1>
+                    <div className="text-center">
                       <Avatar className="w-24 h-24 mx-auto">
                         <AvatarImage
                           src={userData.profilePicture}
