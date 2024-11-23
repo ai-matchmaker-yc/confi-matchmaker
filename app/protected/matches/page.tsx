@@ -1,7 +1,7 @@
 
 
 import RecommendationCard from "@/components/matches/recommendation-card";
-import { createClient } from "@/utils/supabase/client";
+import { createClient } from "@/utils/supabase/server";
 
 // Define the type for a match
 type Match = {
@@ -44,17 +44,21 @@ const RecommendationScreen = async () => {
 	const supabase = await createClient();
 	// Transform the LinkedIn data into a Match if profiles exist
 
+	const user_id = (await supabase.auth.getUser()).data.user?.id
+
+
+	console.log("userid", user_id)
+
 	let { data: rawMatches } = await supabase
 		.from('matches')
 		.select(`
 		*,
 		matchedProfile:profiles!match_user_id (*)
 		`)
-		.eq('source_user_id', '0ae03ae7-c84e-4f62-a724-b9001258d77c')
+		.eq('source_user_id', user_id || "hej")
 
 
-	console.log(rawMatches)
-	const match = rawMatches ? MatchedParser(rawMatches[0]) : null;
+	console.log("rawMatches", rawMatches)
 	// const matches = match ? [match, ...defaultMatches] : defaultMatches;
 	const matches = rawMatches?.map((m) => MatchedParser(m))
 
