@@ -23,8 +23,8 @@ const MatchedParser = (match: any): Match => {
 
 
 	// Calculate a mock match percentage based on skills/background
-	const matchPercentage = 92; // This would be calculated by your matching algorithm
-
+	const matchPercentage = match.compatibility * 100 || 92; // This would be calculated by your matching algorithm
+	console.log(match.compatibility)
 	return {
 		name: `${person.firstName} ${person.lastName}`,
 		occupation: `${person.positions.positionHistory[0].title} at ${company.name}`,
