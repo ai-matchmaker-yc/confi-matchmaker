@@ -1,4 +1,3 @@
-import { ThemeSwitcher } from "@/components/theme-switcher";
 import { GeistSans } from "geist/font/sans";
 import { ThemeProvider } from "next-themes";
 import "./globals.css";
@@ -9,8 +8,8 @@ const defaultUrl = process.env.VERCEL_URL
 
 export const metadata = {
   metadataBase: new URL(defaultUrl),
-  title: "AI Matchmaker",
-  description: "Connect smarter with our_product_name",
+  title: "Compass",
+  description: "Connect smarter with compass",
 };
 
 export default function RootLayout({

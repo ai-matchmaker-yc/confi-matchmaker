@@ -4,6 +4,8 @@ import {
   LockClosedIcon,
 } from '@heroicons/react/20/solid'
 import { redirect } from "next/navigation";
+import compass from './compass.svg';
+import { Compass } from 'lucide-react';
 
 const secondaryFeatures = [
   {
@@ -38,12 +40,8 @@ export default async function Index({ searchParams }: {
         <nav aria-label="Global" className="flex items-center justify-between p-6 lg:px-8">
           <div className="flex lg:flex-1">
             <a href="#" className="-m-1.5 p-1.5">
-              <span className="sr-only">Your Company</span>
-              <img
-                alt=""
-                src="https://tailwindui.com/plus/img/logos/mark.svg?color=indigo&shade=600"
-                className="h-8 w-auto"
-              />
+              <span className="sr-only">Compass</span>
+              <Compass color="black" size={52} />
             </a>
           </div>
           <div className="flex lg:hidden">
