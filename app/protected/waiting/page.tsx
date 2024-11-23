@@ -12,7 +12,7 @@ const WaitingPage = () => {
   const [dots, setDots] = useState('');
   const [userCount, setUserCount] = useState(0);
   const [tip, setTip] = useState(0);
-  const [progress, setProgress] = useState(13);
+  const [currentlyMatching, setCurrentlyMatching] = useState(false)
 
   const minUsers = 60
 
@@ -32,7 +32,7 @@ const WaitingPage = () => {
 
     // Simulate increasing user count
     const countInterval = setInterval(() => {
-      setUserCount(prev => Math.min(prev + Math.floor(Math.random() * 3), 100));
+      setUserCount(prev => { return Math.min(prev + Math.floor(Math.random() * 3 + 1), 100) });
     }, 500);
 
     // Rotate tips
@@ -40,68 +40,72 @@ const WaitingPage = () => {
       setTip(prev => (prev + 1) % tips.length);
     }, 5000);
 
-    // Progress bar animation
-    const progressInterval = setInterval(() => {
-      setProgress(prev => prev < 90 ? prev + 1 : prev);
-    }, 1000);
 
     return () => {
       clearInterval(dotsInterval);
       clearInterval(countInterval);
       clearInterval(tipInterval);
-      clearInterval(progressInterval);
     };
   }, []);
 
+  useEffect(() => {
+    console.log(userCount)
+  }, [userCount])
+
   return (
     // <div className="h-screen bg-gradient-to-b from-blue-50 to-white flex flex-col items-center justify-center p-4">
-      <div className="w-full">
-        <CardHeader>
-          <CardTitle className="text-2xl text-center">Welcome to Supabase Hackaton</CardTitle>
-          <CardDescription className="text-center">
-            Waiting for more people to join
-          </CardDescription>
-        </CardHeader>
+    <div className="w-full mt-32">
+      <CardHeader>
+        <CardTitle className="text-2xl text-center">Welcome to Supabase Hackaton</CardTitle>
+        <CardDescription className="text-center">
+          Waiting for more people to join
+        </CardDescription>
+      </CardHeader>
 
-        <CardContent className="space-y-6">
-          <div>
-            {/* Progress Indicator */}
+      <CardContent className="space-y-6">
+        <div>
+          {/* Progress Indicator */}
 
-            {/* User Count */}
-            <div className="bg-secondary/20 rounded-lg p-4 flex items-center justify-between overflow-hidden">
-              <div className="flex items-center space-x-2">
-                <Users className="h-5 w-5 text-primary" />
-                <span className="text-sm">Active Users</span>
-              </div>
-              <Badge variant="secondary">{userCount} online</Badge>
+          {/* User Count */}
+          <div className="bg-secondary/20 rounded-lg p-4 flex items-center justify-between overflow-hidden">
+            <div className="flex items-center space-x-2">
+              <Users className="h-5 w-5 text-primary" />
+              <span className="text-sm">Active Users</span>
             </div>
-            <Progress indicatorColor={userCount >= minUsers ? "bg-green-500" : ""} value={Math.min(userCount / minUsers, 1) * 100} className="w-full rounded-b-lg rounded-t-none h-2" />
+            <Badge variant="secondary">{userCount} online</Badge>
           </div>
+          <Progress indicatorColor={userCount >= minUsers ? "bg-green-500" : ""} value={Math.min(userCount / minUsers, 1) * 100} className="w-full rounded-b-lg rounded-t-none h-2" />
+        </div>
 
-          {/* Tips Section */}
-          <Alert>
-            <Sparkles className="h-4 w-4" />
-            <AlertDescription>
-              {tips[tip]}
-            </AlertDescription>
-          </Alert>
+        {/* Tips Section */}
+        <Alert>
+          <Sparkles className="h-4 w-4" />
+          <AlertDescription>
+            {tips[tip]}
+          </AlertDescription>
+        </Alert>
 
-          {/* Status Updates */}
-          <div className="space-y-2">
-            <div className="flex items-center gap-2">
-              <Clock className="h-4 w-4 text-primary animate-pulse" />
-              <span className="text-sm text-gray-600">
-                Estimated wait time: 1-2 minutes
-              </span>
-            </div>
+        {/* Status Updates */}
+        <div className="space-y-2">
+          <div className="flex items-center gap-2">
+            <Clock className="h-4 w-4 text-primary animate-pulse" />
+            <span className="text-sm text-gray-600">
+              Estimated wait time: 1-2 minutes
+            </span>
           </div>
+        </div>
 
+        <div className='flex flex-col gap-2'>
           {/* Action Button */}
+          <Button variant="outline" className="w-full">
+            Add preferences to who you want to meat
+          </Button>
           <Button variant="outline" className="w-full">
             Browse Conference Schedule While Waiting
           </Button>
-        </CardContent>
-      </div>
+        </div>
+      </CardContent>
+    </div>
     // </div>
   );
 };

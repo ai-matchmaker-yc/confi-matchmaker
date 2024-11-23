@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import {
 	Star,
 	MessageCircle,
@@ -37,6 +38,8 @@ const RecommendationCard = ({
 		null
 	);
 	const [showFeedback, setShowFeedback] = useState(false);
+
+	const supabase = createClientComponentClient()
 
 
 	return (
@@ -129,7 +132,7 @@ const RecommendationCard = ({
 										<button
 											key={rating}
 											className="text-yellow-400 hover:text-yellow-500"
-											onClick={() => { setShowFeedback(true); }}
+											onClick={async () => { setShowFeedback(true); console.log(await supabase.from("matches").update({ rating: 45 }).eq("id", matchId).select()) }}
 										>
 											<Star className="w-6 h-6" />
 										</button>
@@ -140,7 +143,7 @@ const RecommendationCard = ({
 					</div>
 				)}
 			</CardContent>
-		</Card>
+		</Card >
 	);
 };
 export default RecommendationCard;
