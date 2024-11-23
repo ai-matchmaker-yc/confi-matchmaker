@@ -93,7 +93,7 @@ const RecommendationScreen = async () => {
 					matchPercentage={match.matchPercentage}
 					whyMeetReasons={match.whyMeetReasons}
 					conversationStarters={match.conversationStarters}
-					profileImage={match.profileImage}
+					profileImageUrl={match.profileImage}
 				/>
 			))}
 		</div>
