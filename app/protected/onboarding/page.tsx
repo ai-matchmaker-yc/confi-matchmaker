@@ -213,17 +213,16 @@ export default function Onboarding() {
                       name="linkedin"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>LinkedIn URL</FormLabel>
+                          <FormLabel>LinkedIn Username</FormLabel>
                           <FormControl>
-                            <div className="relative">
-                              <Linkedin
-                                className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-                                size={20}
-                              />
+                            <div className="relative flex items-center">
+                              <span className="absolute left-3 text-gray-400">
+                                https://linkedin.com/in/
+                              </span>
                               <Input
                                 {...field}
-                                placeholder="https://linkedin.com/in/username"
-                                className="pl-10"
+                                placeholder="username"
+                                className="pl-[188.5px]" // Adjust padding to fit the static prefix
                               />
                             </div>
                           </FormControl>
@@ -236,17 +235,16 @@ export default function Onboarding() {
                       name="github"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>GitHub URL</FormLabel>
+                          <FormLabel>GitHub Username</FormLabel>
                           <FormControl>
-                            <div className="relative">
-                              <Github
-                                className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-                                size={20}
-                              />
+                            <div className="relative flex items-center">
+                              <span className="absolute left-3 text-gray-400">
+                                https://github.com/
+                              </span>
                               <Input
                                 {...field}
-                                placeholder="https://github.com/username"
-                                className="pl-10"
+                                placeholder="username"
+                                className="pl-[156.5px]" // Adjust padding to fit the static prefix
                               />
                             </div>
                           </FormControl>
