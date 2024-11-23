@@ -1,10 +1,12 @@
+"use client";
+
 import React, { useState } from 'react';
 import { Card, CardHeader, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Star, MessageCircle, ThumbsUp, User, Briefcase, Calendar } from 'lucide-react';
 const RecommendationCard = () => {
   const [expanded, setExpanded] = useState(false);
-  const [meetingStatus, setMeetingStatus] = useState(null);
+  const [meetingStatus, setMeetingStatus] = useState<'met' | 'not-met' | null>(null);
   const [showFeedback, setShowFeedback] = useState(false);
   return (
     <Card className="w-full max-w-md mx-auto shadow-lg">
