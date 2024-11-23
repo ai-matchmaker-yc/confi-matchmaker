@@ -72,8 +72,11 @@ const RecommendationCard = ({
 						<h4 className="font-medium">Why You Should Meet:</h4>
 						<ul className="space-y-1 text-sm">
 							{whyMeetReasons.map((reason, index) => (
-								<li key={index} className="flex items-center">
-									<ThumbsUp className="w-4 h-4 mr-2 text-green-500 flex" />
+								<li key={index} className="gap-2 flex items-start">
+									<div className="w-4">
+
+										<ThumbsUp className="w-4 h-4 mr-2 text-green-500 flex" />
+									</div>
 									{reason}
 								</li>
 							))}
@@ -88,8 +91,11 @@ const RecommendationCard = ({
 							<h4 className="font-medium">Conversation Starters:</h4>
 							<ul className="mt-2 space-y-2 text-sm">
 								{conversationStarters.map((starter, index) => (
-									<li key={index} className="flex items-start">
-										<MessageCircle className="w-4 h-4 mr-2 mt-1 text-blue-500" />
+									<li key={index} className="gap-2 flex items-start">
+										<div className="w-4">
+
+											<MessageCircle className="w-4 h-4 mr-2 mt-1 text-blue-500" />
+										</div>
 										{starter}
 									</li>
 								))}

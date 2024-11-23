@@ -28,16 +28,12 @@ const MatchedParser = (match: any): Match => {
 	console.log(match.compatibility)
 	return {
 		name: `${person.firstName} ${person.lastName}`,
-		occupation: `${person.positions.positionHistory[0].title} at ${company.name}`,
+		occupation: `${person.positions.positionHistory[0].title} at somewhere`,
 		matchPercentage,
 		matchId: match.id,
-		profileImage: person.photoUrl,
+		profileImage: person.photoUrl || "https://preview.redd.it/7ayjc8s4j2n61.png?auto=webp&s=609a58fa21d46424879ee44156e44e0404940583",
 		whyMeetReasons: match.match_reasons || [],
-		conversationStarters: [
-			`I see you worked on ${person.positions.positionHistory[1].companyName}. What was that experience like?`,
-			`What's it like working at ${company.name}?`,
-			`I noticed you know ${person.languages.join(" and ")}. How did you learn them?`
-		]
+		conversationStarters: match.icebreakers
 	};
 };
 
@@ -83,12 +79,13 @@ const RecommendationScreen = async () => {
 		*,
 		matchedProfile:profiles!match_user_id (*)
 		`)
-		.eq('id', '1')
+		.eq('source_user_id', '0ae03ae7-c84e-4f62-a724-b9001258d77c')
 
 
 	console.log(rawMatches)
 	const match = rawMatches ? MatchedParser(rawMatches[0]) : null;
-	const matches = match ? [match, ...defaultMatches] : defaultMatches;
+	// const matches = match ? [match, ...defaultMatches] : defaultMatches;
+	const matches = rawMatches?.map((m) => MatchedParser(m))
 	return (
 		<div className="flex gap-4 flex-col w-full p-4">
 			{matches.map((match, index) => (

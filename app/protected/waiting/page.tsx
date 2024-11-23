@@ -36,7 +36,7 @@ const WaitingPage = () => {
 
     // Simulate increasing user count
     const countInterval = setInterval(() => {
-      setUserCount(prev => { return Math.min(prev + Math.floor(Math.random() * 3 + 1), 100) });
+      setUserCount(prev => { return Math.min(prev + Math.floor(Math.random() * 7 + 1), 100) });
     }, 500);
 
     // Rotate tips
@@ -58,6 +58,8 @@ const WaitingPage = () => {
       body: { userId: '0ae03ae7-c84e-4f62-a724-b9001258d77c', conferenceId: 1, matchLimit: 5 }
     }).then(({ data, error }) => {
       console.log(data)
+      router.push("/protected/matches")
+
     })
 
     setCurrentlyMatching(true)
