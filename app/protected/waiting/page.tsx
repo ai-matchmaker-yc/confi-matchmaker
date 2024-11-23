@@ -32,8 +32,8 @@ const WaitingPage = () => {
 
     // Simulate increasing user count
     const countInterval = setInterval(() => {
-      setUserCount(prev => Math.min(prev + Math.floor(Math.random() * 3), 45));
-    }, 2000);
+      setUserCount(prev => Math.min(prev + Math.floor(Math.random() * 3), 100));
+    }, 500);
 
     // Rotate tips
     const tipInterval = setInterval(() => {
@@ -66,20 +66,16 @@ const WaitingPage = () => {
         <CardContent className="space-y-6">
           <div>
             {/* Progress Indicator */}
-            <div className="space-y-2">
-              <Progress value={(userCount / minUsers) * 100} className="w-full rounded-t-none" />
-              <p className="text-sm text-gray-500 text-center">
-            
-              </p>
-            </div>
+
             {/* User Count */}
-            <div className="bg-secondary/20 rounded-lg p-4 flex items-center justify-between">
+            <div className="bg-secondary/20 rounded-lg p-4 flex items-center justify-between overflow-hidden">
               <div className="flex items-center space-x-2">
                 <Users className="h-5 w-5 text-primary" />
                 <span className="text-sm">Active Users</span>
               </div>
               <Badge variant="secondary">{userCount} online</Badge>
             </div>
+            <Progress value={Math.min(userCount / minUsers, 1) * 100} className="w-full rounded-b-lg rounded-t-none h-2" />
           </div>
 
           {/* Tips Section */}
