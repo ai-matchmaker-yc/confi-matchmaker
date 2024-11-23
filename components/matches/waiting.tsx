@@ -16,7 +16,7 @@ import {
     DialogTitle,
     DialogClose
 } from "@/components/ui/dialog";
-import ConferencePreferences from "../preferences/page";
+import ConferencePreferences from '@/app/protected/preferences/page';
 
 const WaitingPage = ({ authId }: { authId: string }) => {
     const router = useRouter();
