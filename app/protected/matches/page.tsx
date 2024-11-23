@@ -17,7 +17,6 @@ type Match = {
 const MatchedParser = (match: any): Match => {
 
 	const data = match.matchedProfile.linkedin_data
-	console.log("hedd", match.match_reasons)
 	const person = data.person;
 	const company = data.company;
 
@@ -31,7 +30,7 @@ const MatchedParser = (match: any): Match => {
 		occupation: `${person.positions.positionHistory[0].title} at ${company.name}`,
 		matchPercentage,
 		profileImage: person.photoUrl,
-		whyMeetReasons: match.match_reasons,
+		whyMeetReasons: match.match_reasons || [],
 		conversationStarters: [
 			`I see you worked on ${person.positions.positionHistory[1].companyName}. What was that experience like?`,
 			`What's it like working at ${company.name}?`,
