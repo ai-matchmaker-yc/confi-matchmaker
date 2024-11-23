@@ -30,14 +30,6 @@ export default async function Index({ searchParams }: {
   const { code } = await searchParams;
   if (code) {
     redirect(`/auth/callback?code=${code}`)
-  } else {
-    const supabase = await createClient()
-    const userResponse = await supabase.auth.getUser()
-    if (userResponse.data.user) {
-      console.log(userResponse.data.user)
-      console.log('got a user...')
-      redirect("/protected")
-    }
   }
 
   return (
