@@ -2,21 +2,29 @@
 
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/utils/supabase/client";
+import { Linkedin } from "lucide-react";
 
 export default function LinkedInSignin() {
+  const defaultUrl = process.env.VERCEL_URL
+    ? `https://${process.env.VERCEL_URL}`
+    : "http://localhost:3000";
+
+
   const supabase = createClient();
   return (
     <Button
+      className="w-full bg-blue-600 text-white hover:bg-blue-700 gap-3"
       onClick={() =>
         supabase.auth.signInWithOAuth({
           provider: "linkedin_oidc",
           options: {
-            redirectTo: "/auth/callback",
+            redirectTo: defaultUrl + "/auth/callback",
             scopes: "openid,profile,email",
           },
         })
       }
     >
+      <Linkedin size="20" />
       Log in with LinkedIn
     </Button>
   );

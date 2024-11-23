@@ -1,7 +1,7 @@
 
 
 import RecommendationCard from "@/components/matches/recommendation-card";
-import { createClient } from "@/utils/supabase/client";
+import { createClient } from "@/utils/supabase/server";
 
 // Define the type for a match
 type Match = {
@@ -24,11 +24,35 @@ const MatchedParser = (match: any): Match => {
 
 
 	// Calculate a mock match percentage based on skills/background
-	const matchPercentage = match.compatibility * 100 || 92; // This would be calculated by your matching algorithm
+	const matchPercentage = Math.min(95, match.compatibility * 100 * 1.6) || 92; // This would be calculated by your matching algorithm
 	console.log(match.compatibility)
+
+	let companyName = null
+	try {
+		companyName = person.positions.positionHistory[0].companyName
+	} catch (error) {
+		console.log('no company name')
+	}
+
+	let position = null
+	try {
+		position = person.positions.positionHistory[0].title
+	} catch (error) {
+		console.log('no position title')
+	}
+
+	let occupationString = ''
+	if (companyName && position) {
+		occupationString = `${position} at ${companyName}`
+	} else if (companyName) {
+		occupationString = companyName
+	} else if (position) {
+		occupationString = position
+	}
+
 	return {
 		name: `${person.firstName} ${person.lastName}`,
-		occupation: `${person.positions.positionHistory[0].title} at somewhere`,
+		occupation: occupationString,
 		matchPercentage,
 		matchId: match.id,
 		profileImage: person.photoUrl || "https://preview.redd.it/7ayjc8s4j2n61.png?auto=webp&s=609a58fa21d46424879ee44156e44e0404940583",
@@ -38,40 +62,16 @@ const MatchedParser = (match: any): Match => {
 };
 
 // Sample matches data
-const defaultMatches: Match[] = [
-	{
-		name: "Sarah Chen",
-		occupation: "Software Engineer at Google",
-		matchPercentage: 95,
-		whyMeetReasons: [
-			"You both work in IT",
-			"Similar interest in AI/ML",
-			"Both attended Stanford"
-		],
-		conversationStarters: [
-			"What have you recently worked on?",
-			"What's your take on the latest LLM developments?"
-		]
-	},
-	{
-		name: "Michael Rodriguez",
-		occupation: "Product Manager at Microsoft",
-		matchPercentage: 88,
-		whyMeetReasons: [
-			"Both interested in product development",
-			"Similar conference goals"
-		],
-		conversationStarters: [
-			"What brought you to this conference?",
-			"How do you approach product strategy?"
-		]
-	},
-	// Add more matches as needed
-];
+const defaultMatches: Match[] = [];
 
 const RecommendationScreen = async () => {
 	const supabase = await createClient();
 	// Transform the LinkedIn data into a Match if profiles exist
+
+	const user_id = (await supabase.auth.getUser()).data.user?.id
+
+
+	console.log("userid", user_id)
 
 	let { data: rawMatches } = await supabase
 		.from('matches')
@@ -79,11 +79,10 @@ const RecommendationScreen = async () => {
 		*,
 		matchedProfile:profiles!match_user_id (*)
 		`)
-		.eq('source_user_id', '0ae03ae7-c84e-4f62-a724-b9001258d77c')
+		.eq('source_user_id', user_id || "hej")
 
 
-	console.log(rawMatches)
-	const match = rawMatches ? MatchedParser(rawMatches[0]) : null;
+	console.log("rawMatches", rawMatches)
 	// const matches = match ? [match, ...defaultMatches] : defaultMatches;
 	const matches = rawMatches?.map((m) => MatchedParser(m))
 
@@ -91,7 +90,7 @@ const RecommendationScreen = async () => {
 
 	return (
 		<div className="flex gap-4 flex-col w-full p-4">
-			{matches.map((match, index) => (
+			{matches!.map((match, index) => (
 				<RecommendationCard
 					key={index}
 					name={match.name}

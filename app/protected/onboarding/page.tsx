@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -14,7 +13,6 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Label } from "@/components/ui/label";
 import { Github, Linkedin } from "lucide-react";
 import {
@@ -25,87 +23,69 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { Textarea } from "@/components/ui/textarea";
 import { SupabaseClient } from "@supabase/supabase-js";
 import { createClient } from "@/utils/supabase/client";
 import { redirect } from "next/navigation";
-import { Textarea } from "@/components/ui/textarea";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useState } from "react";
 
-const urlSchema = z.string().url().startsWith("https://");
-
-const step1Schema = z.object({
-  linkedin: urlSchema.refine((url) => url.includes("linkedin.com"), {
-    message: "Must be a valid LinkedIn URL",
-  }),
-  github: urlSchema.refine((url) => url.includes("github.com"), {
-    message: "Must be a valid GitHub URL",
+const formSchema = z.object({
+  linkedin: z
+    .string()
+    .url()
+    .refine((url) => url.includes("linkedin.com"), {
+      message: "Must be a valid LinkedIn URL",
+    }),
+  github: z
+    .string()
+    .url()
+    .refine((url) => url.includes("github.com"), {
+      message: "Must be a valid GitHub URL",
+    }),
+  interestString: z.string().max(150, {
+    message: "Interests should be under 150 characters",
   }),
 });
 
 const step2Schema = z.object({
-  interestString: z.string().max(150),
-});
-
-const step3Schema = z.object({
   firstName: z
     .string()
     .min(2, { message: "Name must be at least 2 characters" }),
   lastName: z
     .string()
     .min(2, { message: "Name must be at least 2 characters" }),
-  profilePicture: z.instanceof(File).optional(),
+  profilePicture: z.instanceof(File).optional().nullable(),
 });
 
-type Step1Schema = z.infer<typeof step1Schema>;
-type Step3Schema = z.infer<typeof step3Schema>;
 type Step2Schema = z.infer<typeof step2Schema>;
 
-const fetchUserData = async (
-  linkedinUrl: string,
-  githubUrl: string,
-  interestString: string,
-  supabaseClient: SupabaseClient
-): Promise<{
-  firstName: string;
-  lastName: string;
-  photoUrl: string;
-} | null> => {
-  try {
-    console.log("Fetching data", linkedinUrl);
-    const user = await supabaseClient.auth.getUser();
-
-    if (!user.data.user) {
-      console.error("not logged in");
-      return { firstName: "", lastName: "", photoUrl: "" };
-    }
-
-    const response = await supabaseClient.functions.invoke("parse-linkedin", {
-      body: {
-        linkedinProfileUrl: linkedinUrl,
-        githubProfileUrl: githubUrl,
-        interestString: interestString,
-        userId: user.data.user.id,
-      },
-    });
-
-    if (response.error) {
-      console.error("Error fetching data:", response.error.message);
-      return null;
-    }
-
-    const data = response.data;
-    console.log(data);
-    return data;
-  } catch (error) {
-    console.error("An unexpected error occurred:", error);
-    return null;
-  }
-};
+type FormSchema = z.infer<typeof formSchema>;
 
 export default function Onboarding() {
+  const [disabled, setDisabled] = useState(false);
   const supabase = createClient();
+
+  const step2Form = useForm<Step2Schema>({
+    resolver: zodResolver(step2Schema),
+    defaultValues: {
+      firstName: "",
+      lastName: "",
+      profilePicture: null,
+    },
+  });
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    return;
+    // if (e.target.files && e.target.files[0]) {
+    //   const file = e.target.files[0];
+    //   step2Form.setValue("profilePicture", file);
+    //   setUserData((prev) => ({
+    //     ...prev,
+    //     profilePicture: URL.createObjectURL(file),
+    //   }));
+    // }
+  };
   const [step, setStep] = useState(1);
-  const [github, setGithub] = useState<string | null>(null);
-  const [linkedin, setLinkedin] = useState<string | null>(null);
   const [userData, setUserData] = useState<{
     firstName: string;
     lastName: string;
@@ -118,65 +98,59 @@ export default function Onboarding() {
     interestString: "",
   });
 
-  const step1Form = useForm<Step1Schema>({
-    resolver: zodResolver(step1Schema),
+  const form = useForm<FormSchema>({
+    resolver: zodResolver(formSchema),
     defaultValues: {
       linkedin: "",
       github: "",
+      interestString: "",
     },
   });
 
-  const step2Form = useForm<Step2Schema>({
-    resolver: zodResolver(step2Schema),
-    defaultValues: {
-      interestString: ""
+  const onFormSubmit = async (data: FormSchema) => {
+    setDisabled(true);
+    console.log("Fetching user data...");
+    const user = await supabase.auth.getUser();
+    const response = await supabase.functions.invoke("parse-linkedin", {
+      body: {
+        linkedinProfileUrl: data.linkedin,
+        githubProfileUrl: data.github,
+        interestString: data.interestString,
+        userId: user.data?.user?.id,
+      },
+    });
+
+    if (response.error) {
+      console.error("Error fetching user data:", response.error.message);
+      return;
     }
-  });
 
-  const step3Form = useForm<Step3Schema>({
-    resolver: zodResolver(step3Schema),
-    defaultValues: {
-      firstName: "",
-      lastName: "",
-      profilePicture: undefined,
-    },
-  });
+    const fetchedData = response.data;
 
-  const onStep1Submit = (data: Step1Schema) => {
-    setGithub(data.github);
-    setLinkedin(data.linkedin);
+    console.log("Fetched data: ", fetchedData);
+
+    setUserData({
+      firstName: fetchedData.firstName,
+      lastName: fetchedData.lastName,
+      profilePicture: fetchedData.photoUrl,
+      interestString: data.interestString,
+    });
+    step2Form.setValue("firstName", fetchedData.firstName);
+    step2Form.setValue("lastName", fetchedData.lastName);
+    // step2Form.setValue("profilePicture", fetchedData.photoUrl);
+
     setStep(2);
+    setDisabled(false);
   };
 
   const onStep2Submit = async (data: Step2Schema) => {
-    const interestString = data.interestString;
-    const fetchedData = await fetchUserData(
-      linkedin!,
-      github!,
-      interestString!,
-      supabase
-    );
-    if (!fetchedData) {
-      console.error("fuck... idk man");
-    } else {
-      setUserData({
-        firstName: userData.firstName,
-        lastName: userData.lastName,
-        profilePicture: userData.profilePicture,
-        interestString: data.interestString || '',
-      });
-      step3Form.setValue("firstName", fetchedData.firstName);
-      step3Form.setValue("lastName", fetchedData.lastName);
-      setStep(3);
-    };
-  }
-
-  const onStep3Submit = async (data: Step3Schema) => {
+    console.log("Onboarding complete", data);
     const finalData = {
-      ...step1Form.getValues(),
+      ...form.getValues(),
+      ...userData,
       ...data,
     };
-    console.log("Onboarding complete", finalData);
+
     const user = await supabase.auth.getUser();
     await supabase
       .from("profiles")
@@ -185,20 +159,11 @@ export default function Onboarding() {
         last_name: finalData.lastName,
         github_url: finalData.github,
         linkedin_url: finalData.linkedin,
+        interest_string: finalData.interestString,
       })
       .eq("id", user!.data!.user!.id);
-    redirect("/protected/waiting");
-  };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      step3Form.setValue("profilePicture", file);
-      setUserData((prev) => ({
-        ...prev,
-        profilePicture: URL.createObjectURL(file),
-      }));
-    }
+    redirect("/protected/waiting");
   };
 
   const pageVariants = {
@@ -229,38 +194,35 @@ export default function Onboarding() {
               <CardTitle className="text-2xl font-bold text-center">
                 {step === 1
                   ? "Welcome! Let's Get Started"
-                  : step === 2
-                    ? "What are your interests?"
-                    : "Confirm your profile"}
+                  : "Confirm Your Profile"}
               </CardTitle>
             </CardHeader>
             <CardContent>
               {step === 1 ? (
-                <Form {...step1Form}>
+                <Form {...form}>
                   <form
-                    onSubmit={step1Form.handleSubmit(onStep1Submit)}
+                    onSubmit={form.handleSubmit(onFormSubmit)}
                     className="space-y-4"
                   >
                     <p className="text-center text-gray-600">
-                      Please enter your LinkedIn and GitHub URLs to help us find
-                      the best matches for you.
+                      Enter your LinkedIn, GitHub, and interests to help us
+                      build your profile.
                     </p>
                     <FormField
-                      control={step1Form.control}
+                      control={form.control}
                       name="linkedin"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>LinkedIn URL</FormLabel>
+                          <FormLabel>LinkedIn Username</FormLabel>
                           <FormControl>
-                            <div className="relative">
-                              <Linkedin
-                                className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-                                size={20}
-                              />
+                            <div className="relative flex items-center">
+                              <span className="absolute left-3 text-gray-400">
+                                https://linkedin.com/in/
+                              </span>
                               <Input
                                 {...field}
-                                placeholder="https://linkedin.com/in/username"
-                                className="pl-10"
+                                placeholder="username"
+                                className="pl-[188.5px]" // Adjust padding to fit the static prefix
                               />
                             </div>
                           </FormControl>
@@ -269,21 +231,20 @@ export default function Onboarding() {
                       )}
                     />
                     <FormField
-                      control={step1Form.control}
+                      control={form.control}
                       name="github"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>GitHub URL</FormLabel>
+                          <FormLabel>GitHub Username</FormLabel>
                           <FormControl>
-                            <div className="relative">
-                              <Github
-                                className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-                                size={20}
-                              />
+                            <div className="relative flex items-center">
+                              <span className="absolute left-3 text-gray-400">
+                                https://github.com/
+                              </span>
                               <Input
                                 {...field}
-                                placeholder="https://github.com/username"
-                                className="pl-10"
+                                placeholder="username"
+                                className="pl-[156.5px]" // Adjust padding to fit the static prefix
                               />
                             </div>
                           </FormControl>
@@ -291,50 +252,35 @@ export default function Onboarding() {
                         </FormItem>
                       )}
                     />
-                    <Button type="submit" className="w-full">
-                      Next
-                    </Button>
-                  </form>
-                </Form>
-              ) : step === 2 ? (
-                <Form {...step2Form}>
-                  <form
-                    onSubmit={step2Form.handleSubmit(onStep2Submit)}
-                    className="space-y-4"
-                  >
-                    <p className="text-center text-gray-600">
-                      Tell us about your interests!
-                    </p>
                     <FormField
-                      control={step2Form.control}
+                      control={form.control}
                       name="interestString"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Your interests</FormLabel>
+                          <FormLabel>Your Interests (optional)</FormLabel>
                           <FormControl>
-                            <div className="relative">
-                              <Textarea
-                                {...field}
-                                placeholder="At this conference, I wish to...."
-                              />
-                            </div>
+                            <Textarea
+                              {...field}
+                              placeholder="At this conference, I wish to...."
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
                       )}
                     />
-                    <Button type="submit" className="w-full">
+                    <Button
+                      type="submit"
+                      className="w-full"
+                      disabled={disabled}
+                    >
                       Next
-                    </Button>
-                      <Button type="submit" className="w-full">
-                        Skip
                     </Button>
                   </form>
                 </Form>
               ) : (
-                <Form {...step3Form}>
+                <Form {...step2Form}>
                   <form
-                    onSubmit={step3Form.handleSubmit(onStep3Submit)}
+                    onSubmit={step2Form.handleSubmit(onStep2Submit)}
                     className="space-y-4"
                   >
                     <div className="text-center">
@@ -362,7 +308,7 @@ export default function Onboarding() {
                       />
                     </div>
                     <FormField
-                      control={step3Form.control}
+                      control={step2Form.control}
                       name="firstName"
                       render={({ field }) => (
                         <FormItem>
@@ -375,8 +321,8 @@ export default function Onboarding() {
                       )}
                     />
                     <FormField
-                      control={step3Form.control}
-                      name="firstName"
+                      control={step2Form.control}
+                      name="lastName"
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Last name</FormLabel>
