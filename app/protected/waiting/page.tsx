@@ -106,7 +106,11 @@ const WaitingPage = () => {
         >
             Add preferences to who you want to meat
           </Button>
-          <Button variant="outline" className="w-full">
+          <Button 
+            variant="outline" 
+            className="w-full"
+            onClick={() => router.push('/protected/schedule')}
+>
             Browse Conference Schedule While Waiting
           </Button>
         </div>
