@@ -75,7 +75,7 @@ const WaitingPage = () => {
               </div>
               <Badge variant="secondary">{userCount} online</Badge>
             </div>
-            <Progress value={Math.min(userCount / minUsers, 1) * 100} className="w-full rounded-b-lg rounded-t-none h-2" />
+            <Progress indicatorColor={userCount >= minUsers ? "bg-green-500" : ""} value={Math.min(userCount / minUsers, 1) * 100} className="w-full rounded-b-lg rounded-t-none h-2" />
           </div>
 
           {/* Tips Section */}
