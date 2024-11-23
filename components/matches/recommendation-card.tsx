@@ -132,7 +132,7 @@ const RecommendationCard = ({
 										<button
 											key={rating}
 											className="text-yellow-400 hover:text-yellow-500"
-											onClick={async () => { setShowFeedback(true); console.log(await supabase.from("matches").update({ rating: 45 }).eq("id", matchId).select()) }}
+											onClick={async () => { setShowFeedback(true); console.log(await supabase.from("matches").update({ rating: rating }).eq("id", matchId).select()) }}
 										>
 											<Star className="w-6 h-6" />
 										</button>
