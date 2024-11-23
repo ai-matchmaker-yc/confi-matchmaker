@@ -28,7 +28,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <main className="min-h-screen flex flex-col items-center">
-            <div>
+            <div className="w-full">
               {children}
             </div>
           </main>
