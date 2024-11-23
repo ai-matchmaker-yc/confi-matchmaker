@@ -55,7 +55,7 @@ const step2Schema = z.object({
   lastName: z
     .string()
     .min(2, { message: "Name must be at least 2 characters" }),
-  profilePicture: z.instanceof(File).optional(),
+  profilePicture: z.instanceof(File).optional().nullable(),
 });
 
 type Step2Schema = z.infer<typeof step2Schema>;
@@ -71,7 +71,7 @@ export default function Onboarding() {
     defaultValues: {
       firstName: "",
       lastName: "",
-      profilePicture: undefined,
+      profilePicture: null,
     },
   });
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -137,14 +137,13 @@ export default function Onboarding() {
     });
     step2Form.setValue("firstName", fetchedData.firstName);
     step2Form.setValue("lastName", fetchedData.lastName);
-    step2Form.setValue("profilePicture", fetchedData.photoUrl);
+    // step2Form.setValue("profilePicture", fetchedData.photoUrl);
 
     setStep(2);
     setDisabled(false);
   };
 
   const onStep2Submit = async (data: Step2Schema) => {
-    console.log("HELOOO?")
     console.log("Onboarding complete", data);
     const finalData = {
       ...form.getValues(),
@@ -282,7 +281,10 @@ export default function Onboarding() {
                     onSubmit={step2Form.handleSubmit(onStep2Submit)}
                     className="space-y-4"
                   >
-                    <div className="text-center">
+                      <div className="text-center">
+                        <h1>
+                          {JSON.stringify(step2Form.formState.errors)}
+                        </h1>
                       <Avatar className="w-24 h-24 mx-auto">
                         <AvatarImage
                           src={userData.profilePicture}
