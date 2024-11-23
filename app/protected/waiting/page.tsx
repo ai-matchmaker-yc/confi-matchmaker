@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { useRouter } from 'next/navigation';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 
 const WaitingPage = () => {
   const router = useRouter();
@@ -15,6 +16,7 @@ const WaitingPage = () => {
   const [userCount, setUserCount] = useState(0);
   const [tip, setTip] = useState(0);
   const [currentlyMatching, setCurrentlyMatching] = useState(false)
+  const [readyToMatch, setReadyToMatch] = useState(false)
 
   const minUsers = 60
 
@@ -50,8 +52,20 @@ const WaitingPage = () => {
     };
   }, []);
 
+  const supabase = createClientComponentClient()
+
   useEffect(() => {
     console.log(userCount)
+    if (currentlyMatching) return
+    setReadyToMatch(true)
+
+    if (userCount >= minUsers) {
+      supabase.functions.invoke('orchestrator', {
+        body: { userId: '0ae03ae7-c84e-4f62-a724-b9001258d77c', conferenceId: 1, matchLimit: 5 }
+      }).then(({ data, error }) => { console.log(data) })
+
+      setCurrentlyMatching(true)
+    }
   }, [userCount])
 
   return (
@@ -65,6 +79,9 @@ const WaitingPage = () => {
       </CardHeader>
 
       <CardContent className="space-y-6">
+        <Button className="w-full">
+          Match me up!
+        </Button>
         <div>
           {/* Progress Indicator */}
 
@@ -99,18 +116,18 @@ const WaitingPage = () => {
 
         <div className='flex flex-col gap-2'>
           {/* Action Button */}
-          <Button 
-          variant="outline" 
-          className="w-full"
-          onClick={() => router.push('/protected/preferences')}
-        >
+          <Button
+            variant="outline"
+            className="w-full"
+            onClick={() => router.push('/protected/preferences')}
+          >
             Add preferences to who you want to meat
           </Button>
-          <Button 
-            variant="outline" 
+          <Button
+            variant="outline"
             className="w-full"
             onClick={() => router.push('/protected/schedule')}
->
+          >
             Browse Conference Schedule While Waiting
           </Button>
         </div>
