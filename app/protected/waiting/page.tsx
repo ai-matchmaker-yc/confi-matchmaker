@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState, useEffect } from 'react';
-import { Users, Clock, Sparkles, Minus } from 'lucide-react';
+import { Users, Clock, Sparkles, Minus, LoaderCircle } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
@@ -52,19 +52,24 @@ const WaitingPage = () => {
     };
   }, []);
 
+  const matchUp = () => {
+    if (currentlyMatching) return
+    supabase.functions.invoke('orchestrator', {
+      body: { userId: '0ae03ae7-c84e-4f62-a724-b9001258d77c', conferenceId: 1, matchLimit: 5 }
+    }).then(({ data, error }) => {
+      console.log(data)
+    })
+
+    setCurrentlyMatching(true)
+  }
+
   const supabase = createClientComponentClient()
 
   useEffect(() => {
-    console.log(userCount)
     if (currentlyMatching) return
-    setReadyToMatch(true)
 
     if (userCount >= minUsers) {
-      supabase.functions.invoke('orchestrator', {
-        body: { userId: '0ae03ae7-c84e-4f62-a724-b9001258d77c', conferenceId: 1, matchLimit: 5 }
-      }).then(({ data, error }) => { console.log(data) })
-
-      setCurrentlyMatching(true)
+      setReadyToMatch(true)
     }
   }, [userCount])
 
@@ -79,9 +84,12 @@ const WaitingPage = () => {
       </CardHeader>
 
       <CardContent className="space-y-6">
-        <Button className="w-full">
-          Match me up!
-        </Button>
+        {readyToMatch &&
+          <Button className="w-full" onClick={() => matchUp()}>
+            {currentlyMatching ? <div className='flex items-center gap-3'><LoaderCircle className='animate-spin h-5'></LoaderCircle>Matching you up</div> : "Match me up!"}
+
+          </Button>
+        }
         <div>
           {/* Progress Indicator */}
 
