@@ -24,11 +24,11 @@ const MatchedParser = (match: any): Match => {
 
 
 	// Calculate a mock match percentage based on skills/background
-	const matchPercentage = match.compatibility * 100 || 92; // This would be calculated by your matching algorithm
+	const matchPercentage = Math.min(95, match.compatibility * 100 * 1.6) || 92; // This would be calculated by your matching algorithm
 	console.log(match.compatibility)
 	return {
 		name: `${person.firstName} ${person.lastName}`,
-		occupation: `${person.positions.positionHistory[0].title} at somewhere`,
+		occupation: `${person.positions.positionHistory[0]?.title || "something"} at somewhere`,
 		matchPercentage,
 		matchId: match.id,
 		profileImage: person.photoUrl || "https://preview.redd.it/7ayjc8s4j2n61.png?auto=webp&s=609a58fa21d46424879ee44156e44e0404940583",
