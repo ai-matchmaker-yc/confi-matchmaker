@@ -14,10 +14,15 @@ type Match = {
 };
 
 // Transform LinkedIn data into a Match
-const linkedInToMatch = (data: any): Match => {
+const MatchedParser = (match: any): Match => {
+
+	const data = match.matchedProfile.linkedin_data
+	console.log("hedd", match.match_reasons)
 	const person = data.person;
 	const company = data.company;
-	
+
+
+
 	// Calculate a mock match percentage based on skills/background
 	const matchPercentage = 92; // This would be calculated by your matching algorithm
 
@@ -26,11 +31,7 @@ const linkedInToMatch = (data: any): Match => {
 		occupation: `${person.positions.positionHistory[0].title} at ${company.name}`,
 		matchPercentage,
 		profileImage: person.photoUrl,
-		whyMeetReasons: [
-			`Both work in ${company.industry}`,
-			`Similar background in ${person.skills.slice(0, 2).join(" and ")}`,
-			`Both interested in technology and innovation`
-		],
+		whyMeetReasons: match.match_reasons,
 		conversationStarters: [
 			`I see you worked on ${person.positions.positionHistory[1].companyName}. What was that experience like?`,
 			`What's it like working at ${company.name}?`,
@@ -73,22 +74,27 @@ const defaultMatches: Match[] = [
 
 const RecommendationScreen = async () => {
 	const supabase = await createClient();
-	
-	let { data: profiles, error } = await supabase
-		.from('profiles')
-		.select("*")
-		.eq('id', '0ae03ae7-c84e-4f62-a724-b9001258d77c');
 	// Transform the LinkedIn data into a Match if profiles exist
-	const match = profiles ? linkedInToMatch(profiles[0].linkedin_data) : null;
-	const matches = match ? [match, ...defaultMatches] : defaultMatches;
 
+	let { data: rawMatches } = await supabase
+		.from('matches')
+		.select(`
+		*,
+		matchedProfile:profiles!match_user_id (*)
+		`)
+		.eq('id', '1')
+
+
+	console.log(rawMatches)
+	const match = rawMatches ? MatchedParser(rawMatches[0]) : null;
+	const matches = match ? [match, ...defaultMatches] : defaultMatches;
 	return (
 		<div className="flex gap-4 flex-col w-full p-4">
 			{matches.map((match, index) => (
 				<RecommendationCard
 					key={index}
 					name={match.name}
-					
+
 					occupation={match.occupation}
 					matchPercentage={match.matchPercentage}
 					whyMeetReasons={match.whyMeetReasons}
@@ -101,3 +107,5 @@ const RecommendationScreen = async () => {
 };
 
 export default RecommendationScreen;
+
+
