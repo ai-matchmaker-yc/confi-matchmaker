@@ -75,10 +75,10 @@ const RecommendationScreen = async () => {
 	let { data: profiles, error } = await supabase
 		.from('profiles')
 		.select("*")
-		.eq('id', '0ae03ae7-c84e-4f62-a724-b9001258d77c');
+		.eq('id', '');
 
 	// Transform the LinkedIn data into a Match
-	const adamMatch = linkedInToMatch(profiles[0]);
+	const Match = linkedInToMatch(profiles[0].linkedin_data);
 	const matches = [adamMatch, ...defaultMatches];
 
 	return (
