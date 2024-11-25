@@ -5,9 +5,7 @@ import { createClient } from "@/utils/supabase/client";
 import { Linkedin } from "lucide-react";
 
 export default function LinkedInSignin() {
-  const defaultUrl = process.env.VERCEL_URL
-    ? `https://${process.env.VERCEL_URL}`
-    : "http://localhost:3000";
+  const defaultUrl = "https://confi-matchmaker.vercel.app";
 
 
   const supabase = createClient();
